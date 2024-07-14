@@ -1,0 +1,12 @@
+---
+layout: homepage.njk
+isHomepage: true
+---
+<img src="{{ site.coverImage }}" alt="{{ site.title }} cover" style="max-width: 300px;">
+<p>{{ site.description }}</p>
+
+<div class="chapter-grid">
+{%- for chapter in collections.chapters -%}
+  {% include "chapterCard.njk" %}
+{%- endfor -%}
+</div>

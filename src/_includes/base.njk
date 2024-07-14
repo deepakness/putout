@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title | pageTitle(site.title, site.author, isHomepage) }}</title>
+    
+    <!-- Meta tags -->
+    <meta name="description" content="{{ description or site.description }}">
+    <meta name="author" content="{{ site.author }}">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="{{ site.url }}{{ page.url }}">
+    <meta property="og:title" content="{{ title | pageTitle(site.title, site.author, isHomepage) }}">
+    <meta property="og:description" content="{{ description or site.description }}">
+    <meta property="og:image" content="{{ site.url }}{{ site.coverImage }}">
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="{{ site.url }}{{ page.url }}">
+    <meta property="twitter:title" content="{{ title | pageTitle(site.title, site.author, isHomepage) }}">
+    <meta property="twitter:description" content="{{ description or site.description }}">
+    <meta property="twitter:image" content="{{ site.url }}{{ site.coverImage }}">
+    
+    <!-- Canonical URL -->
+    <link rel="canonical" href="{{ site.url }}{{ page.url }}">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="{{ site.url }}/assets/favicon.png">
+    
+    <!-- Stylesheets -->
+    <link href="/styles/tailwind.css" rel="stylesheet">
+    <link href="{{ fonts }}" rel="stylesheet">
+</head>
+<body class="{{ themes[site.theme].body }} flex flex-col min-h-screen">
+    <!-- Hamburger menu -->
+    {% if not isHomepage %}
+        <div class="fixed top-0 left-0 h-screen w-64 {{ themes[site.theme].card }} transform -translate-x-full transition-transform duration-300 ease-in-out z-50 overflow-y-auto" id="sidebar">
+            <div class="p-4 pt-16 pb-24">
+                <h2 class="text-xl font-bold mb-4 font-sans">Chapters</h2>
+                <ul>
+                    {%- for chapter in collections.chapters -%}
+                    <li class="mb-2">
+                        <a href="{{ chapter.url }}" class="hover:underline">{{ chapter.data.title }}</a>
+                    </li>
+                    {%- endfor -%}
+                </ul>
+            </div>
+        </div>
+    
+        <!-- Overlay for click-outside -->
+        <div class="fixed inset-0 bg-black opacity-50 z-40 hidden" id="overlay"></div>
+        
+        <!-- Hamburger button -->
+        <button class="fixed top-4 left-4 z-50 p-2 rounded-md {{ themes[site.theme].button }}" id="menu-toggle">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+        </button>
+    {% endif %}
+
+    <header class="{{ themes[site.theme].header }} p-4">
+        <div class="container mx-auto text-center">
+            <a href="/" class="text-xl font-bold font-sans hover:text-opacity-80 transition-colors duration-300">{{ site.title }}</a>
+        </div>
+    </header>
+    <main class="flex-grow">
+        {{ content | safe }}
+    </main>
+
+    <script>
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('overlay');
+        const menuToggle = document.getElementById('menu-toggle');
+
+        function openMenu() {
+            sidebar.classList.remove('-translate-x-full');
+            overlay.classList.remove('hidden');
+        }
+
+        function closeMenu() {
+            sidebar.classList.add('-translate-x-full');
+            overlay.classList.add('hidden');
+        }
+
+        menuToggle.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if (sidebar.classList.contains('-translate-x-full')) {
+                openMenu();
+            } else {
+                closeMenu();
+            }
+        });
+
+        overlay.addEventListener('click', closeMenu);
+
+        // Close menu when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!sidebar.contains(e.target) && !menuToggle.contains(e.target)) {
+                closeMenu();
+            }
+        });
+
+        // Close menu when clicking a link (for mobile)
+        sidebar.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', () => {
+                if (window.innerWidth < 768) {
+                    closeMenu();
+                }
+            });
+        });
+    </script>
+</body>
+</html>

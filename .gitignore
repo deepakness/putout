@@ -1,0 +1,14 @@
+# Build output
+/dist/
+
+# Dependency caches
+/node_modules/
+
+# Operating system files
+.DS_Store
+Thumbs.db
+
+# Editor-specific files
+.idea/
+*.iml
+.vscode/

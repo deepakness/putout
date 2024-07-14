@@ -1,0 +1,31 @@
+---
+layout: base.njk
+---
+<article class="container mx-auto px-4 py-8 max-w-3xl">
+    <h1 class="text-4xl font-bold mb-6 font-sans">{{ title }}</h1>
+    <div class="{{ themes[site.theme].prose }} max-w-none mb-8">
+        {{ content | safe }}
+    </div>
+
+    {% set neighborChapters = collections.chapters | findNeighborChapters(page) %}
+    
+    <div class="flex flex-col sm:flex-row justify-between items-center space-y-4 sm:space-y-0 space-x-4 mt-12 border-t pt-8">
+        {% if neighborChapters.prev %}
+        <a href="{{ neighborChapters.prev.url }}" class="{{ themes[site.theme].button }} flex items-center rounded py-2 px-4 transition-colors duration-300 font-sans">
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+            </svg>
+            <span><strong>Previous</strong>: {{ neighborChapters.prev.data.title }}</span>
+        </a>
+        {% endif %}
+
+        {% if neighborChapters.next %}
+        <a href="{{ neighborChapters.next.url }}" class="{{ themes[site.theme].button }} flex items-center rounded py-2 px-4 transition-colors duration-300 font-sans">
+            <span><strong>Next</strong>: {{ neighborChapters.next.data.title }}</span>
+            <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+            </svg>
+        </a>
+        {% endif %}
+    </div>
+</article>
