@@ -9,6 +9,7 @@ Turn your ebook into a beautiful, easy-to-navigate website using the power of [1
 
 ## Table of Contents
 
+- [Quick Deploy](#quick-deploy-)
 - [Features](#features-)
 - [Demo](#demo-)
 - [Getting Started](#getting-started-)
@@ -18,6 +19,14 @@ Turn your ebook into a beautiful, easy-to-navigate website using the power of [1
 - [Contributing](#contributing-)
 - [Troubleshooting](#troubleshooting-)
 - [License](#license-)
+
+## Quick Deploy
+
+Quickly deploy your own copy of this project to Netlify with one click:
+
+[![Deploy to Netlify](https://www.netlify.com/img/deploy/button.svg)](https://app.netlify.com/start/deploy?repository=https://github.com/deepakness/putout)
+
+This will create a new repository in your GitHub account with this project's files, connect it to Netlify, and deploy it. You can later make changes to the GitHub repository.
 
 ## Features ✨
 
