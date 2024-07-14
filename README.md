@@ -1,6 +1,9 @@
 # PutOut - Ebook-to-Website with 11ty
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT) 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Version](https://img.shields.io/github/package-json/v/deepakness/putout)](https://github.com/deepakness/putout)
+[![Node.js Version](https://img.shields.io/node/v/@11ty/eleventy)](https://nodejs.org/)
+[![Last Commit](https://img.shields.io/github/last-commit/deepakness/putout)](https://github.com/deepakness/putout/commits/main)
 
 Turn your ebook into a beautiful, easy-to-navigate website using the power of [11ty](https://www.11ty.dev/), a simpler static site generator. This project provides a solid starting point with a pre-configured template, streamlined chapter management, and customizable themes.
 
@@ -24,7 +27,7 @@ Turn your ebook into a beautiful, easy-to-navigate website using the power of [1
 - **Customizable Themes:** Choose from multiple built-in themes to style your ebook website.
 - **Fast and Lightweight:** 11ty ensures a blazing-fast website experience for your readers.
 - **SEO-Friendly:** Meta tags for better search engine optimization are included. 
-- **Social Sharing:** Make it easy for readers to share your ebook website (add social links in configuration).
+- **Social Links:** Make it easy for readers to find you on social media sites as well.
 
 ## Demo 🚀
 
@@ -32,35 +35,46 @@ Check out the live demo of this ebook template: [Demo 1](https://minimalism.puto
 
 ## Getting Started 🛠️
 
+Check out [PutOut documentation](https://putout.org/docs/getting-started/) for more detailed information.
+
 1. **Use This Template:**
-   Click the "Use this template" button at the top of this repository to create your own copy.
+   
+Click the "Use this template" button at the top of this repository to create your own copy.
 
 2. **Clone Your Repository:**
-   ```bash
-   git clone https://github.com/yourusername/your-repo-name.git
-   cd your-repo-name
-   ```
+
+```bash
+git clone https://github.com/yourusername/your-repo-name.git
+```
+
+```bash
+cd your-repo-name
+```
 
 3. **Install Dependencies:**
-   ```bash
-   npm install 
-   ```
+
+```bash
+npm install 
+```
 
 4. **Configure Your Ebook:**
-   - Open `src/_data/site.js` and customize the settings (title, author, description, social links, etc.) to match your ebook.
-   - Replace the sample chapters in `src/chapters` with your ebook's chapters (in Markdown format).
+
+- Open `src/_data/site.js` and customize the settings (title, author, description, social links, etc.) to match your ebook.
+- Replace the sample chapters in `src/chapters` with your ebook's chapters (in Markdown format).
 
 5. **Start Development Server:**
-   ```bash
-   npm run start 
-   ```
-   This will start a local development server at `http://localhost:8080/`. Open this URL in your web browser.
+
+```bash
+npm run start 
+```
+This will start a local development server at `http://localhost:8080/`. Open this URL in your web browser.
 
 6. **Build for Production:**
-   ```bash
-   npm run build
-   ```
-   This will generate your static website files in the `dist/` directory, ready for deployment.
+
+```bash
+npm run build
+```
+This will generate your static website files in the `dist/` directory, ready for deployment.
 
 ## Deployment 🚀
 
@@ -71,41 +85,50 @@ The easiest way to deploy your ebook website is with [Netlify](https://www.netli
 3. Configure build settings (if needed): Set the build command to `npm run build` and the publish directory to `dist/`.
 4. Deploy: Netlify will automatically build and deploy your site whenever you push changes to your repository.
 
+Learn more about [deployment](https://putout.org/docs/deployment/)
+
 ## Updating the Template 🔄
 
 To get the latest updates from the original template:
 
 1. Add the original repository as a remote (you only need to do this once):
-   ```bash
-   git remote add template https://github.com/deepakness/putout.git
-   ```
+
+```bash
+git remote add template https://github.com/deepakness/putout.git
+```
 
 2. Fetch the latest changes:
-   ```bash
-   git fetch template
-   ```
+
+```bash
+git fetch template
+```
 
 3. Merge the changes into your main branch:
-   ```bash
-   git merge template/main --allow-unrelated-histories
-   ```
+
+```bash
+git merge template/main --allow-unrelated-histories
+```
 
 4. Resolve any conflicts and commit the changes:
-   ```bash
-   git add .
-   git commit -m "Merged updates from template"
-   ```
+
+```bash
+git add .
+git commit -m "Merged updates from template"
+```
 
 5. Push the changes to your repository:
-   ```bash
-   git push origin main
-   ```
+
+```bash
+git push origin main
+```
 
 ## Customization 🎨
 
 - **Themes:** Modify or add themes in `src/_data/themes.js`.
 - **Layouts:** Customize page layouts in `src/_includes/`.
 - **Styles:** Adjust styles by modifying `tailwind.config.js` and `src/styles/tailwind.css`.
+
+Learn more about [customization](https://putout.org/docs/customization/)
 
 ## Contributing 🤝
 

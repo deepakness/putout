@@ -1,6 +1,7 @@
 {
   "name": "putout",
   "version": "1.0.0",
+  "description": "Turn your ebook into a beautiful, easy-to-navigate website using 11ty",
   "main": ".eleventy.js",
   "scripts": {
     "start": "npm-run-all --parallel watch:*",
@@ -10,10 +11,15 @@
     "build:eleventy": "eleventy",
     "build:tailwind": "tailwindcss -i src/styles/tailwind.css -o dist/styles/tailwind.css"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "description": "",
+  "keywords": [
+    "ebook",
+    "11ty",
+    "static-site-generator",
+    "tailwindcss",
+    "jamstack"
+  ],
+  "author": "DeepakNess <me@deepakness.com> (https://deepakness.com)",
+  "license": "MIT",
   "dependencies": {
     "@11ty/eleventy": "^2.0.1",
     "@11ty/eleventy-navigation": "^0.3.5",
@@ -24,5 +30,16 @@
   },
   "devDependencies": {
     "npm-run-all": "^4.1.5"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/deepakness/putout.git"
+  },
+  "bugs": {
+    "url": "https://github.com/deepakness/putout/issues"
+  },
+  "homepage": "https://github.com/deepakness/putout#readme",
+  "engines": {
+    "node": ">=14.0.0"
   }
 }
