@@ -2,7 +2,6 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Version](https://img.shields.io/github/package-json/v/deepakness/putout)](https://github.com/deepakness/putout)
-[![Node.js Version](https://img.shields.io/node/v/@11ty/eleventy)](https://nodejs.org/)
 [![Last Commit](https://img.shields.io/github/last-commit/deepakness/putout)](https://github.com/deepakness/putout/commits/main)
 
 Turn your ebook into a beautiful, easy-to-navigate website using the power of [11ty](https://www.11ty.dev/), a simpler static site generator. This project provides a solid starting point with a pre-configured template, streamlined chapter management, and customizable themes.
