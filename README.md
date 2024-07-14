@@ -20,7 +20,7 @@ Turn your ebook into a beautiful, easy-to-navigate website using the power of [1
 - [Troubleshooting](#troubleshooting-)
 - [License](#license-)
 
-## Quick Deploy
+## Quick Deploy ⚡️
 
 Quickly deploy your own copy of this project to Netlify with one click:
 
@@ -53,17 +53,17 @@ Click the "Use this template" button at the top of this repository to create you
 2. **Clone Your Repository:**
 
 ```bash
-git clone https://github.com/deepakness/putout.git
+git clone https://github.com/<username>/<repository>.git
 ```
 
 ```bash
-cd putout
+cd <repository>
 ```
 
 3. **Install Dependencies:**
 
 ```bash
-npm install 
+npm install
 ```
 
 4. **Configure Your Ebook:**
@@ -74,7 +74,7 @@ npm install
 5. **Start Development Server:**
 
 ```bash
-npm run start 
+npm run start
 ```
 This will start a local development server at `http://localhost:8080/`. Open this URL in your web browser.
 
@@ -122,6 +122,9 @@ git merge template/main --allow-unrelated-histories
 
 ```bash
 git add .
+```
+
+```bash
 git commit -m "Merged updates from template"
 ```
 
