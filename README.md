@@ -44,11 +44,11 @@ Click the "Use this template" button at the top of this repository to create you
 2. **Clone Your Repository:**
 
 ```bash
-git clone https://github.com/yourusername/your-repo-name.git
+git clone https://github.com/deepakness/putout.git
 ```
 
 ```bash
-cd your-repo-name
+cd putout
 ```
 
 3. **Install Dependencies:**
