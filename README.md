@@ -39,7 +39,7 @@ This will create a new repository in your GitHub account with this project's fil
 
 ## Demo 🚀
 
-Check out the live demo of this ebook template: [Demo 1](https://minimalism.putout.org/), Demo 2
+Check out the live demo of this ebook template: [Demo 1](https://ebook.untalkedseo.com/), [Demo 2](https://minimalism.putout.org/)
 
 ## Getting Started 🛠️
 
