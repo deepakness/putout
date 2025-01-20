@@ -14,10 +14,16 @@ module.exports = {
   author: "Chef Baker",  // Author's name
   description: "A comprehensive journey from novice to expert, covering essential techniques, delicious recipes, and expert tips.", // Brief description of the book
   url: "https://putout.org",  // The exact domain or subdomain where you'll be hosting
-  coverImage: "/assets/cover.png",  // Address for the cover image
+  coverImage: "/assets/cover.png",  // Address for the cover image (relative to src directory)
 
   // Theme selection
   theme: "default", // Options: "default", "glass", "dark", "purple", "warm"
+
+  // Book format options
+  formats: {
+    pdf: true,    // Set to true to enable PDF generation
+    epub: true    // Set to true to enable EPUB generation
+  },
 
   // Social media links (optional) – remove '//' from infront of them to make them active
   socialLinks: [

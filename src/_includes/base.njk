@@ -35,6 +35,14 @@
 
     <!-- Tracking -->
     {% include "tracking.njk" %}
+
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            lucide.createIcons();
+        });
+    </script>
 </head>
 <body class="{{ themes[site.theme].body }} flex flex-col min-h-screen">
     <!-- Hamburger menu -->

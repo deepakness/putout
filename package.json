@@ -9,7 +9,8 @@
     "watch:tailwind": "tailwindcss -i src/styles/tailwind.css -o dist/styles/tailwind.css --watch",
     "build": "npm-run-all build:*",
     "build:eleventy": "eleventy",
-    "build:tailwind": "tailwindcss -i src/styles/tailwind.css -o dist/styles/tailwind.css"
+    "build:tailwind": "tailwindcss -i src/styles/tailwind.css -o dist/styles/tailwind.css",
+    "build:formats": "node scripts/generate-formats.js"
   },
   "keywords": [
     "ebook",
@@ -25,7 +26,11 @@
     "@11ty/eleventy-navigation": "^0.3.5",
     "@tailwindcss/typography": "^0.5.13",
     "autoprefixer": "^10.4.19",
+    "epub-gen": "^0.1.0",
+    "lucide": "^0.473.0",
+    "markdown-it": "^14.1.0",
     "postcss": "^8.4.39",
+    "puppeteer": "^22.15.0",
     "tailwindcss": "^3.4.4"
   },
   "devDependencies": {

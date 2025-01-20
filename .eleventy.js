@@ -6,6 +6,8 @@ module.exports = function(eleventyConfig) {
     eleventyConfig.addPlugin(eleventyNavigationPlugin);
 
     eleventyConfig.addPassthroughCopy("src/assets");
+    eleventyConfig.addPassthroughCopy("src/styles");
+    eleventyConfig.addPassthroughCopy("src/scripts");
     eleventyConfig.addWatchTarget("./src/styles/tailwind.css");
 
     eleventyConfig.addCollection("chapters", function(collectionApi) {

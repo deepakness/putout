@@ -1,3 +1,10 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Lucide icon styles */
+[data-lucide] {
+    width: 24px;
+    height: 24px;
+    stroke-width: 1.5;
+}
