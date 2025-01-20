@@ -36,6 +36,7 @@ This will create a new repository in your GitHub account with this project's fil
 - **Fast and Lightweight:** 11ty ensures a blazing-fast website experience for your readers.
 - **SEO-Friendly:** Meta tags for better search engine optimization are included. 
 - **Social Links:** Make it easy for readers to find you on social media sites as well.
+- **PDF and EPUB Generation:** Automatically generate PDF and EPUB files for your ebook.
 
 ## Demo 🚀
 
