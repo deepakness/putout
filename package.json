@@ -1,6 +1,6 @@
 {
   "name": "putout",
-  "version": "1.1",
+  "version": "1.1.0",
   "description": "Turn your ebook into a beautiful, easy-to-navigate website using 11ty",
   "main": ".eleventy.js",
   "scripts": {

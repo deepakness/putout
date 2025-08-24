@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.1] - 2025-08-24
+## [1.1.0] - 2025-08-24
 
 ### Changed
 - Updated dependencies: `tailwindcss@3.4.17`, `@tailwindcss/typography@0.5.16`, `postcss@8.5.6`, `autoprefixer@10.4.21`, `lucide@0.541.0`.
@@ -17,7 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Verification
 - Eleventy build, Tailwind CSS compile, and PDF/EPUB generation validated successfully.
 
-## [1.0] - 2024-07-14
+## [1.0.0] - 2024-07-14
 
 ### Added
 - Initial release of PutOut, an 11ty-based ebook-to-website conversion template
