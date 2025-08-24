@@ -12,3 +12,5 @@ Thumbs.db
 .idea/
 *.iml
 .vscode/
+
+audit.json
