@@ -53,8 +53,8 @@ module.exports = function(eleventyConfig) {
           const slug = data.customSlug || data.page.fileSlug;
           return `/${slug}/`;
         }
-        // For non-chapter files, return null to use the default permalink
-        return null;
+        // For non-chapter files, return undefined to use the default permalink
+        return undefined;
       }
     });
 
