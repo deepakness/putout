@@ -14,3 +14,6 @@ Thumbs.db
 .vscode/
 
 audit.json
+
+# Wiki (separate git repo)
+wiki/
