@@ -17,3 +17,7 @@ audit.json
 
 # Wiki (separate git repo)
 wiki/
+
+# AI files
+
+CLAUDE.md
