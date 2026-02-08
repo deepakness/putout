@@ -1,7 +1,10 @@
-<div class="{{ themes[site.theme].card }} rounded-lg overflow-hidden transition-transform duration-300 hover:shadow-lg hover:-translate-y-1">
+<a href="{{ chapter.url }}" class="group block bg-white border border-gray-200 shadow-sm hover:border-accent-200 hover:shadow-md dark:bg-gray-800 dark:border-gray-700 dark:hover:border-accent-700 rounded-xl overflow-hidden transition-all duration-200 hover:-translate-y-0.5">
     <div class="p-6">
-        <h3 class="text-2xl font-semibold mb-2 font-sans">{{ chapter.data.title }}</h3>
-        <p class="text-base mb-4">{{ chapter.data.description }}</p>
-        <a href="{{ chapter.url }}" class="{{ themes[site.theme].button }} inline-block py-2 px-4 rounded transition-colors duration-300 font-sans">Read Chapter</a>
+        <div class="flex items-center gap-2">
+            <span class="text-xs font-bold uppercase tracking-wider text-accent-600 font-heading">Chapter {{ loop.index }}</span>
+            <span class="text-xs opacity-50 font-heading">&middot; {{ chapter.content | readingTime }} min</span>
+        </div>
+        <h3 class="text-xl font-semibold mt-2 mb-2 font-heading group-hover:text-accent-600 transition-colors duration-200">{{ chapter.data.title }}</h3>
+        <p class="text-sm opacity-70 leading-relaxed line-clamp-2">{{ chapter.data.description }}</p>
     </div>
-</div>
+</a>

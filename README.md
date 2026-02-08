@@ -4,7 +4,7 @@
 [![Version](https://img.shields.io/github/package-json/v/deepakness/putout)](https://github.com/deepakness/putout)
 [![Last Commit](https://img.shields.io/github/last-commit/deepakness/putout)](https://github.com/deepakness/putout/commits/main)
 
-Turn your ebook into a beautiful, easy-to-navigate website using the power of [11ty](https://www.11ty.dev/), a simpler static site generator. This project provides a solid starting point with a pre-configured template, streamlined chapter management, and customizable themes.
+Turn your ebook into a beautiful, easy-to-navigate website using [Eleventy (11ty) v3](https://www.11ty.dev/) and [Tailwind CSS v3](https://tailwindcss.com/). This project provides a solid starting point with a pre-configured template, streamlined chapter management, 8 accent color palettes, and reader-controlled dark mode.
 
 ## Table of Contents
 
@@ -29,22 +29,27 @@ This will create a new repository in your GitHub account with this project's fil
 
 ## Features ✨
 
-- **Effortless Setup:**  Get up and running quickly with a well-structured template and clear installation instructions.
+- **Effortless Setup:** Get up and running quickly with a well-structured template and clear installation instructions.
 - **Chapter Organization:** Manage your ebook's chapters easily in individual Markdown files.
-- **Navigation Made Easy:** Automatic generation of a chapter-based navigation menu (hamburger menu on non-homepage pages).
-- **Customizable Themes:** Choose from multiple built-in themes to style your ebook website.
-- **Fast and Lightweight:** 11ty ensures a blazing-fast website experience for your readers.
-- **SEO-Friendly:** Meta tags for better search engine optimization are included. 
-- **Social Links:** Make it easy for readers to find you on social media sites as well.
+- **Navigation:** Sidebar navigation with hamburger menu, keyboard shortcuts (arrow keys), swipe gestures on mobile, and a mobile bottom nav bar.
+- **8 Accent Colors:** Choose from emerald, indigo, rose, amber, blue, violet, teal, or orange to brand your site. Set one value in `site.js`.
+- **Dark Mode:** Reader-controlled light/dark/auto toggle with localStorage persistence and anti-FOUC script.
+- **Reading Experience:** Progress bar, reading time estimates, scroll-to-top button, and next-chapter prefetch at 50% scroll.
+- **Fast and Lightweight:** Eleventy v3 ensures a blazing-fast website experience for your readers.
+- **SEO-Friendly:** Meta tags, JSON-LD structured data (Book + Article schemas), XML sitemap, and robots.txt.
+- **Accessibility:** Skip-to-content link, focus-visible styles, keyboard navigation, noscript fallback, and print stylesheet.
+- **Social Links:** Make it easy for readers to find you on social media.
 - **PDF and EPUB Generation:** Automatically generate PDF and EPUB files for your ebook.
+- **Custom 404 Page:** Styled error page with chapter directory for easy recovery.
 
 ## Demo 🚀
 
-Check out the live demo of this ebook template: [Demo 1](https://ebook.untalkedseo.com/), [Demo 2](https://minimalism.putout.org/)
+Check out the live demo of this ebook template: [Demo](https://ebook.untalkedseo.com/)
 
 ## Getting Started 🛠️
 
-Check out [PutOut documentation](https://putout.org/docs/getting-started/) for more detailed information.
+**Prerequisites:** Node.js 18 or later.
+
 
 1. **Use This Template:**
    
@@ -94,7 +99,6 @@ The easiest way to deploy your ebook website is with [Netlify](https://www.netli
 3. Configure build settings (if needed): Set the build command to `npm run build` and the publish directory to `dist/`.
 4. Deploy: Netlify will automatically build and deploy your site whenever you push changes to your repository.
 
-Learn more about [deployment](https://putout.org/docs/deployment/)
 
 ## Updating the Template 🔄
 
@@ -136,11 +140,14 @@ git push origin main
 
 ## Customization 🎨
 
-- **Themes:** Modify or add themes in `src/_data/themes.js`.
-- **Layouts:** Customize page layouts in `src/_includes/`.
-- **Styles:** Adjust styles by modifying `tailwind.config.js` and `src/styles/tailwind.css`.
+All key settings live in **`src/_data/site.js`**:
 
-Learn more about [customization](https://putout.org/docs/customization/)
+- **Accent Color:** Set `theme` to one of: `emerald`, `indigo`, `rose`, `amber`, `blue`, `violet`, `teal`, `orange`. This changes buttons, links, highlights, and all branded elements across the site. Colors are defined in `src/_data/accentColors.js`.
+- **Dark Mode:** Readers control light/dark/auto mode via a toggle in the footer. No configuration needed — it works out of the box with localStorage persistence.
+- **Fonts:** Set `fonts.heading` and `fonts.body` to any Google Fonts family name. No need to touch `tailwind.config.js`.
+- **New Chapters:** Copy `src/chapters/_chapter-template.md`, rename with a number prefix (e.g., `04-my-chapter.md`), and fill in the frontmatter (`title`, `description`, `permalink`). The `permalink` field controls the URL (e.g., `permalink: "/my-chapter/"`).
+- **Layouts:** Customize page layouts in `src/_includes/`.
+
 
 ## Contributing 🤝
 
@@ -155,7 +162,7 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 ## Troubleshooting 🔧
 
 - **Build Errors:** Ensure all dependencies are installed (`npm install`) and you're using a compatible Node.js version.
-- **Styling Issues:** Check your `tailwind.config.js` and ensure you've rebuilt your CSS (`npm run build:css`).
+- **Styling Issues:** Check your `tailwind.config.js` and ensure you've rebuilt your CSS (`npm run build:tailwind`).
 - **Content Not Updating:** Make sure your Markdown files are in the correct location and format.
 
 For more help, please [open an issue](https://github.com/deepakness/putout/issues).

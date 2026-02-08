@@ -1,126 +1,281 @@
 <!DOCTYPE html>
-<html lang="en" class="h-full">
+<html lang="en" class="h-full" style="scroll-padding-top: 4rem">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>{{ title | pageTitle(site.title, site.author, isHomepage) }}</title>
-    
+
     <!-- Meta tags -->
     <meta name="description" content="{{ description or site.description }}">
     <meta name="author" content="{{ site.author }}">
-    
+
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="{{ site.url }}{{ page.url }}">
     <meta property="og:title" content="{{ title | pageTitle(site.title, site.author, isHomepage) }}">
     <meta property="og:description" content="{{ description or site.description }}">
     <meta property="og:image" content="{{ site.url }}{{ site.coverImage }}">
-    
+
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
     <meta property="twitter:url" content="{{ site.url }}{{ page.url }}">
     <meta property="twitter:title" content="{{ title | pageTitle(site.title, site.author, isHomepage) }}">
     <meta property="twitter:description" content="{{ description or site.description }}">
     <meta property="twitter:image" content="{{ site.url }}{{ site.coverImage }}">
-    
+
     <!-- Canonical URL -->
     <link rel="canonical" href="{{ site.url }}{{ page.url }}">
-    
+
     <!-- Favicon -->
     <link rel="icon" type="image/png" href="{{ site.url }}/assets/favicon.png">
-    
+
     <!-- Stylesheets -->
     <link href="/styles/tailwind.css" rel="stylesheet">
-    <link href="{{ fonts }}" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preload" href="{{ fonts }}" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link href="{{ fonts }}" rel="stylesheet"></noscript>
+
+    <!-- Accent color CSS custom properties -->
+    {% set accent = accentColors[site.theme] or accentColors.emerald %}
+    <style>
+    :root {
+        --accent-50: {{ accent['50'] }};
+        --accent-100: {{ accent['100'] }};
+        --accent-200: {{ accent['200'] }};
+        --accent-300: {{ accent['300'] }};
+        --accent-400: {{ accent['400'] }};
+        --accent-500: {{ accent['500'] }};
+        --accent-600: {{ accent['600'] }};
+        --accent-700: {{ accent['700'] }};
+        --accent-800: {{ accent['800'] }};
+        --accent-900: {{ accent['900'] }};
+        --accent-950: {{ accent['950'] }};
+    }
+    @media (min-width: 768px) {
+        #sidebar.sidebar-collapsed { width: 3.5rem; }
+        #sidebar.sidebar-collapsed .sidebar-title { display: none; }
+        #sidebar.sidebar-collapsed .sidebar-inner { padding: 0.5rem; padding-top: 0.75rem; }
+        #sidebar.sidebar-collapsed .chapter-link { justify-content: center; padding-left: 0.25rem; padding-right: 0.25rem; }
+        #sidebar:not(.sidebar-collapsed) .sidebar-toggle-icon { transform: rotate(180deg); }
+    }
+    </style>
+
+    <!-- Dark mode anti-FOUC script (must run before paint) -->
+    <script>
+    (function() {
+        var pref = localStorage.getItem('darkMode') || 'auto';
+        var dark = pref === 'dark' || (pref === 'auto' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+        if (dark) document.documentElement.classList.add('dark');
+    })();
+    </script>
 
     <!-- Tracking -->
     {% include "tracking.njk" %}
 
     <!-- Lucide Icons -->
-    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://unpkg.com/lucide@0.563.0" defer></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             lucide.createIcons();
         });
     </script>
+
+    <!-- JSON-LD Structured Data -->
+    {% if isHomepage %}
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "Book",
+        "name": "{{ site.longTitle or site.title }}",
+        "author": {
+            "@type": "Person",
+            "name": "{{ site.author }}"
+        },
+        "description": "{{ site.description }}",
+        "image": "{{ site.url }}{{ site.coverImage }}",
+        "url": "{{ site.url }}/"{% if site.formats.pdf or site.formats.epub %},
+        "workExample": [
+            {% if site.formats.pdf %}{
+                "@type": "Book",
+                "bookFormat": "https://schema.org/EBook",
+                "url": "{{ site.url }}/book.pdf"
+            }{% if site.formats.epub %},{% endif %}{% endif %}
+            {% if site.formats.epub %}{
+                "@type": "Book",
+                "bookFormat": "https://schema.org/EBook",
+                "url": "{{ site.url }}/book.epub"
+            }{% endif %}
+        ]{% endif %}
+    }
+    </script>
+    {% else %}
+    {% set chapterIndex = collections.chapters | findChapterIndex(page) %}
+    {% if chapterIndex !== null %}
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "Article",
+        "headline": "{{ title }}",
+        "author": {
+            "@type": "Person",
+            "name": "{{ site.author }}"
+        },
+        "description": "{{ description or site.description }}",
+        "position": {{ chapterIndex + 1 }},
+        "isPartOf": {
+            "@type": "Book",
+            "name": "{{ site.longTitle or site.title }}",
+            "url": "{{ site.url }}/"
+        },
+        "url": "{{ site.url }}{{ page.url }}"
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+            {
+                "@type": "ListItem",
+                "position": 1,
+                "name": "Home",
+                "item": "{{ site.url }}/"
+            },
+            {
+                "@type": "ListItem",
+                "position": 2,
+                "name": "Chapter {{ chapterIndex + 1 }}: {{ title }}",
+                "item": "{{ site.url }}{{ page.url }}"
+            }
+        ]
+    }
+    </script>
+    {% endif %}
+    {% endif %}
 </head>
-<body class="{{ themes[site.theme].body }} flex flex-col min-h-screen">
-    <!-- Hamburger menu -->
-    {% if not isHomepage %}
-        <div class="fixed top-0 left-0 h-screen w-64 {{ themes[site.theme].card }} transform -translate-x-full transition-transform duration-300 ease-in-out z-50 overflow-y-auto" id="sidebar">
-            <div class="p-4 pt-16 pb-24">
-                <h2 class="text-xl font-bold mb-4 font-sans">Chapters</h2>
-                <ul>
-                    {%- for chapter in collections.chapters -%}
-                    <li class="mb-2">
-                        <a href="{{ chapter.url }}" class="hover:underline">{{ chapter.data.title }}</a>
-                    </li>
-                    {%- endfor -%}
-                </ul>
-            </div>
+<body class="bg-gray-50 text-gray-900 dark:bg-gray-900 dark:text-gray-100 font-body">
+
+    <!-- Noscript fallback -->
+    <noscript>
+        <div style="background: #fef3c7; color: #92400e; padding: 0.75rem 1rem; text-align: center; font-family: sans-serif; font-size: 0.875rem;">
+            This site works best with JavaScript enabled for navigation features.
         </div>
-    
-        <!-- Overlay for click-outside -->
-        <div class="fixed inset-0 bg-black opacity-50 z-40 hidden" id="overlay"></div>
-        
-        <!-- Hamburger button -->
-        <button class="fixed top-4 left-4 z-50 p-2 rounded-md {{ themes[site.theme].button }}" id="menu-toggle">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-            </svg>
-        </button>
+    </noscript>
+
+    <!-- Skip to content -->
+    <a href="#main-content" class="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[60] focus:px-4 focus:py-2 focus:bg-accent-600 focus:text-white focus:rounded-lg focus:text-sm focus:font-semibold focus:font-heading">Skip to content</a>
+
+    {% if not isHomepage %}
+    <!-- Sidebar -->
+    <nav class="fixed top-0 left-0 h-screen w-64 bg-white border-r border-gray-200 dark:bg-gray-800 dark:border-gray-700 transform -translate-x-full md:translate-x-0 transition-all duration-300 ease-in-out z-50 overflow-y-auto shadow-lg md:shadow-none sidebar-collapsed" id="sidebar" role="navigation" aria-label="Table of contents">
+        <div class="sidebar-inner p-5 pt-4">
+            <button class="hidden md:flex items-center justify-center w-full p-1.5 mb-3 rounded-lg hover:bg-accent-50/50 dark:hover:bg-accent-950/30 transition-colors duration-200" id="sidebar-toggle" aria-label="Expand sidebar">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 transition-transform duration-300 sidebar-toggle-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+                </svg>
+            </button>
+            <h2 class="sidebar-title text-xs font-bold uppercase tracking-wider mb-4 font-heading opacity-50">Chapters</h2>
+            <ul class="space-y-1">
+                <li>
+                    <a href="/" class="chapter-link flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-heading transition-colors duration-200 hover:bg-accent-50/50 dark:hover:bg-accent-950/30" title="Home">
+                        <span class="shrink-0 font-medium text-accent-600 dark:text-accent-400">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-4 0a1 1 0 01-1-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 01-1 1h-2z" />
+                            </svg>
+                        </span>
+                        <span class="truncate sidebar-title">Home</span>
+                    </a>
+                </li>
+                {%- for chapter in collections.chapters -%}
+                <li>
+                    <a href="{{ chapter.url }}" class="chapter-link flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-heading transition-colors duration-200 {% if page.url == chapter.url %}bg-accent-50 text-accent-700 font-medium dark:bg-accent-950/40 dark:text-accent-300{% else %}hover:bg-accent-50/50 dark:hover:bg-accent-950/30{% endif %}" {% if page.url == chapter.url %}aria-current="page"{% endif %} title="{{ chapter.data.title }}">
+                        <span class="shrink-0 font-medium text-accent-600 dark:text-accent-400">{{ loop.index }}</span>
+                        <span class="truncate sidebar-title">{{ chapter.data.title }}</span>
+                    </a>
+                </li>
+                {%- endfor -%}
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Overlay for click-outside -->
+    <div class="fixed inset-0 bg-black/30 z-40 opacity-0 pointer-events-none transition-opacity duration-300 md:hidden" id="overlay"></div>
     {% endif %}
 
-    <header class="{{ themes[site.theme].header }} p-4">
-        <div class="container mx-auto text-center">
-            <a href="/" class="text-xl font-bold font-sans hover:text-opacity-80 transition-colors duration-300">{{ site.title }}</a>
+    <!-- Content wrapper (shifts right on desktop when sidebar is present) -->
+    <div class="{% if not isHomepage %}md:ml-14{% endif %} flex flex-col min-h-screen transition-[margin] duration-300" id="content-wrapper">
+
+    <!-- Header -->
+    <header class="bg-white text-gray-900 border-b border-gray-200 dark:bg-gray-800 dark:text-gray-100 dark:border-gray-700 sticky top-0 z-30">
+        <div class="container mx-auto px-4 h-14 flex items-center">
+            {% if not isHomepage %}
+            <button class="md:hidden p-2 -ml-2 rounded-lg hover:bg-accent-50/50 dark:hover:bg-accent-950/30 transition-colors duration-200" id="menu-toggle" aria-label="Toggle navigation" aria-expanded="false">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+                </svg>
+            </button>
+            {% endif %}
+            <a href="/" class="{% if not isHomepage %}ml-3 md:ml-0{% endif %} text-lg font-bold font-heading hover:opacity-80 transition-opacity duration-200">{{ site.title }}</a>
         </div>
+        {% if not isHomepage %}
+        <!-- Progress bar -->
+        <div class="h-1 w-full bg-transparent">
+            <div id="progress-bar" class="bg-accent-500 h-full transition-[width] duration-100 ease-out" style="width: 0%" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" aria-label="Reading progress"></div>
+        </div>
+        {% endif %}
     </header>
-    <main class="flex-grow">
+
+    <main id="main-content" class="flex-grow">
         {{ content | safe }}
     </main>
 
-    <script>
-        const sidebar = document.getElementById('sidebar');
-        const overlay = document.getElementById('overlay');
-        const menuToggle = document.getElementById('menu-toggle');
+    <!-- Footer -->
+    <footer class="bg-white border-t border-gray-200 text-gray-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 pt-8 pb-16 md:pb-8">
+        <div class="container mx-auto px-4">
+            <div class="flex flex-col sm:flex-row items-center justify-between gap-4 text-sm">
+                <p>&copy; {{ site.author }}. All rights reserved.</p>
+                <div class="flex items-center gap-4">
+                    {% for link in site.socialLinks %}
+                        {% if link.url %}
+                        <a href="{{ link.url }}" target="_blank" rel="noopener noreferrer" class="text-gray-400 hover:text-accent-600 dark:hover:text-accent-400 transition-colors duration-200" aria-label="Visit us on {{ link.platform }}">
+                            {% if link.platform == "twitter" %}
+                                <i data-lucide="twitter" class="w-4 h-4"></i>
+                            {% elif link.platform == "github" %}
+                                <i data-lucide="github" class="w-4 h-4"></i>
+                            {% elif link.platform == "linkedin" %}
+                                <i data-lucide="linkedin" class="w-4 h-4"></i>
+                            {% else %}
+                                <i data-lucide="globe" class="w-4 h-4"></i>
+                            {% endif %}
+                        </a>
+                        {% endif %}
+                    {% endfor %}
+                    <span class="opacity-50">|</span>
+                    <!-- Dark mode toggle -->
+                    <button id="dark-mode-toggle" class="flex items-center gap-1.5 hover:text-accent-600 dark:hover:text-accent-400 transition-colors duration-200" aria-label="Toggle dark mode">
+                        <svg id="dm-icon-light" class="w-4 h-4 hidden" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m8.66-13.66l-.71.71M4.05 19.95l-.71.71M21 12h-1M4 12H3m16.95 7.95l-.71-.71M4.05 4.05l-.71-.71M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+                        </svg>
+                        <svg id="dm-icon-dark" class="w-4 h-4 hidden" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M21 12.79A9 9 0 1111.21 3a7 7 0 009.79 9.79z" />
+                        </svg>
+                        <svg id="dm-icon-auto" class="w-4 h-4 hidden" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                        </svg>
+                        <span id="dm-label" class="text-xs font-heading">Auto</span>
+                    </button>
+                    {% if site.showBranding %}
+                    <span class="opacity-50">|</span>
+                    <a href="https://github.com/deepakness/putout" target="_blank" rel="noopener noreferrer" class="font-heading hover:opacity-80 transition-opacity duration-200">Built with PutOut</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </footer>
 
-        function openMenu() {
-            sidebar.classList.remove('-translate-x-full');
-            overlay.classList.remove('hidden');
-        }
+    </div><!-- end content wrapper -->
 
-        function closeMenu() {
-            sidebar.classList.add('-translate-x-full');
-            overlay.classList.add('hidden');
-        }
-
-        menuToggle.addEventListener('click', (e) => {
-            e.stopPropagation();
-            if (sidebar.classList.contains('-translate-x-full')) {
-                openMenu();
-            } else {
-                closeMenu();
-            }
-        });
-
-        overlay.addEventListener('click', closeMenu);
-
-        // Close menu when clicking outside
-        document.addEventListener('click', (e) => {
-            if (!sidebar.contains(e.target) && !menuToggle.contains(e.target)) {
-                closeMenu();
-            }
-        });
-
-        // Close menu when clicking a link (for mobile)
-        sidebar.querySelectorAll('a').forEach(link => {
-            link.addEventListener('click', () => {
-                if (window.innerWidth < 768) {
-                    closeMenu();
-                }
-            });
-        });
-    </script>
+    <script src="/scripts/navigation.js"></script>
 </body>
 </html>

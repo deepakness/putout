@@ -1,31 +1,88 @@
 ---
 layout: base.njk
 ---
-<article class="container mx-auto px-4 py-8 max-w-3xl">
-    <h1 class="text-4xl font-bold mb-6 font-sans">{{ title }}</h1>
-    <div class="{{ themes[site.theme].prose }} max-w-none mb-8">
+{% set neighborChapters = collections.chapters | findNeighborChapters(page) %}
+
+<article class="container mx-auto px-4 py-12 max-w-3xl pb-16 md:pb-12">
+    <header class="mb-8">
+        {% set chapterIndex = collections.chapters | findChapterIndex(page) %}
+        {% if chapterIndex !== null %}
+        <div class="flex items-center gap-3 flex-wrap">
+            <span class="text-sm font-bold uppercase tracking-wider text-accent-600 font-heading border-l-2 border-accent-500 pl-3">Chapter {{ chapterIndex + 1 }} of {{ collections.chapters.length }}</span>
+            <span class="text-sm opacity-50 font-heading">&middot; {{ content | readingTime }} min read</span>
+        </div>
+        {% endif %}
+        <h1 class="text-2xl sm:text-4xl font-bold mt-2 font-heading">{{ title }}</h1>
+    </header>
+
+    <div class="prose prose-gray prose-a:text-accent-600 prose-a:no-underline hover:prose-a:underline dark:prose-invert dark:prose-a:text-accent-400 sm:prose-lg max-w-none mb-12">
         {{ content | safe }}
     </div>
 
-    {% set neighborChapters = collections.chapters | findNeighborChapters(page) %}
-    
-    <div class="flex flex-col sm:flex-row justify-between items-center space-y-4 sm:space-y-0 space-x-4 mt-12 border-t pt-8">
+    <nav aria-label="Chapter navigation" class="flex flex-col sm:flex-row gap-4 mt-12 border-t pt-8 {% if not neighborChapters.prev %}sm:justify-end{% endif %}">
         {% if neighborChapters.prev %}
-        <a href="{{ neighborChapters.prev.url }}" class="{{ themes[site.theme].button }} flex items-center rounded py-2 px-4 transition-colors duration-300 font-sans">
-            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
-            </svg>
-            <span><strong>Previous</strong>: {{ neighborChapters.prev.data.title }}</span>
+        <a href="{{ neighborChapters.prev.url }}" class="bg-white border border-gray-200 shadow-sm hover:border-accent-200 hover:shadow-md dark:bg-gray-800 dark:border-gray-700 dark:hover:border-accent-700 rounded-xl p-5 transition-all duration-200 hover:-translate-y-0.5 group flex-1">
+            <span class="text-xs font-medium uppercase tracking-wider opacity-50 font-heading flex items-center gap-1">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+                </svg>
+                Previous
+            </span>
+            <p class="font-semibold mt-1 font-heading group-hover:text-accent-600 transition-colors duration-200">{{ neighborChapters.prev.data.title }}</p>
         </a>
         {% endif %}
 
         {% if neighborChapters.next %}
-        <a href="{{ neighborChapters.next.url }}" class="{{ themes[site.theme].button }} flex items-center rounded py-2 px-4 transition-colors duration-300 font-sans">
-            <span><strong>Next</strong>: {{ neighborChapters.next.data.title }}</span>
-            <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
+        <a href="{{ neighborChapters.next.url }}" class="bg-white border border-gray-200 shadow-sm hover:border-accent-200 hover:shadow-md dark:bg-gray-800 dark:border-gray-700 dark:hover:border-accent-700 rounded-xl p-5 text-right transition-all duration-200 hover:-translate-y-0.5 group flex-1" data-next-chapter>
+            <span class="text-xs font-medium uppercase tracking-wider opacity-50 font-heading flex items-center justify-end gap-1">
+                Next
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+                </svg>
+            </span>
+            <p class="font-semibold mt-1 font-heading group-hover:text-accent-600 transition-colors duration-200">{{ neighborChapters.next.data.title }}</p>
         </a>
         {% endif %}
-    </div>
+    </nav>
 </article>
+
+<!-- Scroll to top button -->
+<button id="scroll-to-top" class="fixed bottom-20 right-4 md:bottom-8 md:right-8 z-30 p-3 rounded-full bg-accent-600 text-white shadow-lg hover:bg-accent-700 transition-all duration-300 opacity-0 translate-y-4 pointer-events-none" aria-label="Scroll to top">
+    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M5 15l7-7 7 7" />
+    </svg>
+</button>
+
+<!-- Mobile bottom nav bar -->
+<div class="fixed bottom-0 left-0 right-0 z-30 md:hidden bg-white text-gray-900 border-t border-gray-200 dark:bg-gray-800 dark:text-gray-100 dark:border-gray-700 pb-safe">
+    <div class="flex items-center justify-between h-12 px-2">
+        {% if neighborChapters.prev %}
+        <a href="{{ neighborChapters.prev.url }}" class="flex items-center gap-1 px-3 py-2 text-xs font-heading font-medium truncate max-w-[35%] hover:text-accent-600 transition-colors duration-200">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+            </svg>
+            <span class="truncate">{{ neighborChapters.prev.data.title }}</span>
+        </a>
+        {% else %}
+        <div class="max-w-[35%]"></div>
+        {% endif %}
+
+        <button id="mobile-toc-toggle" class="flex items-center gap-1.5 px-3 py-2 text-xs font-heading font-medium uppercase tracking-wider hover:text-accent-600 transition-colors duration-200" aria-label="Open table of contents">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h7" />
+            </svg>
+            TOC
+        </button>
+
+        {% if neighborChapters.next %}
+        <a href="{{ neighborChapters.next.url }}" class="flex items-center gap-1 px-3 py-2 text-xs font-heading font-medium truncate max-w-[35%] hover:text-accent-600 transition-colors duration-200">
+            <span class="truncate">{{ neighborChapters.next.data.title }}</span>
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+            </svg>
+        </a>
+        {% else %}
+        <div class="max-w-[35%]"></div>
+        {% endif %}
+    </div>
+</div>

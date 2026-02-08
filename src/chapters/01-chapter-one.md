@@ -1,7 +1,7 @@
 ---
 title: "Introduction to Baking"
 description: "Laying the groundwork for a lifetime of delicious creations, we'll cover the fundamentals of baking."
-customSlug: "introduction"
+permalink: "/introduction/"
 ---
 
 Baking is the magical process of transforming simple ingredients like flour, sugar, eggs, and butter into mouthwatering treats. It's a science that requires precision and an art that allows for creativity.

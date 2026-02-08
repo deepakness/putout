@@ -1,16 +1,17 @@
 const puppeteer = require('puppeteer');
-const Epub = require('epub-gen');
+const epub = require('epub-gen-memory').default;
 const fs = require('fs');
 const path = require('path');
 const MarkdownIt = require('markdown-it');
+const matter = require('gray-matter');
 const site = require('../src/_data/site.js');
 
 const md = new MarkdownIt();
 
-async function getChapterContent() {
+function getChapterContent() {
     const chaptersDir = path.join(__dirname, '../src/chapters');
     const files = fs.readdirSync(chaptersDir)
-        .filter(file => file.endsWith('.md'))
+        .filter(file => file.endsWith('.md') && !file.startsWith('_'))
         .sort((a, b) => {
             const numA = parseInt(a.match(/\d+/)[0]);
             const numB = parseInt(b.match(/\d+/)[0]);
@@ -19,180 +20,211 @@ async function getChapterContent() {
 
     const chapters = [];
     for (const file of files) {
-        const content = fs.readFileSync(path.join(chaptersDir, file), 'utf-8');
-        
-        // Extract title from frontmatter
-        const titleMatch = content.match(/title:\s*"([^"]+)"/);
-        const title = titleMatch ? titleMatch[1] : '';
-        
-        // Remove frontmatter (content between --- markers)
-        const cleanContent = content.replace(/^---[\s\S]*?---\n/, '');
-        
-        // Convert markdown to HTML
-        const htmlContent = md.render(cleanContent);
-        
+        const raw = fs.readFileSync(path.join(chaptersDir, file), 'utf-8');
+        const { data, content } = matter(raw);
+        const title = data.title || '';
+        const htmlContent = md.render(content);
+
         chapters.push({
             title: title,
-            data: htmlContent
+            content: htmlContent
         });
     }
     return chapters;
 }
 
-async function generatePDF() {
+async function generatePDF(chapters) {
     if (!site.formats.pdf) return;
-    
-    const browser = await puppeteer.launch({ headless: 'new' });
-    const page = await browser.newPage();
-    
-    // Create a temporary HTML file with all chapters
-    const chapters = await getChapterContent();
-    const html = `
-        <!DOCTYPE html>
-        <html>
-        <head>
-            <title>${site.title}</title>
-            <style>
-                @import url('https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&display=swap');
-                
-                body { 
-                    font-family: 'Merriweather', serif;
-                    max-width: 800px;
-                    margin: 0 auto;
-                    padding: 20px;
-                    line-height: 1.8;
-                    font-size: 12pt;
-                }
-                
-                h1 { 
-                    text-align: center;
-                    margin-bottom: 60px;
-                    margin-top: 40px;
-                    font-size: 32pt;
-                    font-weight: 700;
-                    line-height: 1.2;
-                }
-                
-                .chapter { 
-                    margin-bottom: 30px;
-                    page-break-before: always;
-                }
-                
-                .chapter:first-child { 
-                    page-break-before: avoid;
-                }
-                
-                .chapter-title { 
-                    font-size: 24pt;
-                    margin-bottom: 30px;
-                    margin-top: 40px;
-                    text-align: center;
-                    font-weight: 700;
-                    line-height: 1.3;
-                }
 
-                p {
-                    margin-bottom: 1.2em;
-                    text-align: justify;
-                }
-
-                h2, h3, h4 {
-                    margin-top: 1.5em;
-                    margin-bottom: 0.8em;
-                    line-height: 1.4;
-                }
-
-                h2 { font-size: 18pt; }
-                h3 { font-size: 16pt; }
-                h4 { font-size: 14pt; }
-
-                ul, ol {
-                    margin-bottom: 1.2em;
-                    padding-left: 2em;
-                }
-
-                li {
-                    margin-bottom: 0.5em;
-                }
-            </style>
-        </head>
-        <body>
-            <h1>${site.longTitle || site.title}</h1>
-            ${chapters.map(chapter => `
-                <div class="chapter">
-                    <h2 class="chapter-title">${chapter.title}</h2>
-                    ${chapter.data}
-                </div>
-            `).join('')}
-        </body>
-        </html>
-    `;
-
+    const browser = await puppeteer.launch({ headless: 'shell' });
     const tempHtmlPath = path.join(__dirname, '../dist/temp.html');
-    fs.writeFileSync(tempHtmlPath, html);
 
-    await page.goto(`file://${tempHtmlPath}`);
-    await page.pdf({
-        path: path.join(__dirname, '../dist/book.pdf'),
-        format: 'A4',
-        margin: { top: '2.5cm', right: '2.5cm', bottom: '2.5cm', left: '2.5cm' },
-        printBackground: true
-    });
+    try {
+        const page = await browser.newPage();
 
-    fs.unlinkSync(tempHtmlPath);
-    await browser.close();
+        const bodyFont = site.fonts.body || 'Merriweather';
+        const headingFont = site.fonts.heading || 'Inter';
+
+        // Build table of contents
+        const tocHtml = chapters.map(function (ch, i) {
+            return '<li style="margin-bottom: 0.5em;"><a href="#chapter-' + (i + 1) + '" style="text-decoration: none; color: #333;">' +
+                '<span style="font-weight: 600;">Chapter ' + (i + 1) + ':</span> ' + ch.title + '</a></li>';
+        }).join('\n');
+
+        const html = '<!DOCTYPE html>\n' +
+            '<html>\n' +
+            '<head>\n' +
+            '    <title>' + site.title + '</title>\n' +
+            '    <style>\n' +
+            '        @import url(\'https://fonts.googleapis.com/css2?family=' + bodyFont.replace(/\s+/g, '+') + ':wght@400;700&family=' + headingFont.replace(/\s+/g, '+') + ':wght@400;600;700&display=swap\');\n' +
+            '\n' +
+            '        body {\n' +
+            '            font-family: \'' + bodyFont + '\', serif;\n' +
+            '            max-width: 800px;\n' +
+            '            margin: 0 auto;\n' +
+            '            padding: 20px;\n' +
+            '            line-height: 1.8;\n' +
+            '            font-size: 12pt;\n' +
+            '        }\n' +
+            '\n' +
+            '        h1 {\n' +
+            '            font-family: \'' + headingFont + '\', sans-serif;\n' +
+            '            text-align: center;\n' +
+            '            margin-bottom: 60px;\n' +
+            '            margin-top: 40px;\n' +
+            '            font-size: 32pt;\n' +
+            '            font-weight: 700;\n' +
+            '            line-height: 1.2;\n' +
+            '        }\n' +
+            '\n' +
+            '        .toc {\n' +
+            '            page-break-after: always;\n' +
+            '        }\n' +
+            '\n' +
+            '        .toc h2 {\n' +
+            '            font-family: \'' + headingFont + '\', sans-serif;\n' +
+            '            text-align: center;\n' +
+            '            font-size: 22pt;\n' +
+            '            margin-bottom: 30px;\n' +
+            '            font-weight: 700;\n' +
+            '        }\n' +
+            '\n' +
+            '        .toc ol {\n' +
+            '            list-style: none;\n' +
+            '            padding: 0;\n' +
+            '            max-width: 500px;\n' +
+            '            margin: 0 auto;\n' +
+            '            font-size: 13pt;\n' +
+            '            line-height: 2;\n' +
+            '        }\n' +
+            '\n' +
+            '        .chapter {\n' +
+            '            margin-bottom: 30px;\n' +
+            '            page-break-before: always;\n' +
+            '        }\n' +
+            '\n' +
+            '        .chapter-title {\n' +
+            '            font-family: \'' + headingFont + '\', sans-serif;\n' +
+            '            font-size: 24pt;\n' +
+            '            margin-bottom: 30px;\n' +
+            '            margin-top: 40px;\n' +
+            '            text-align: center;\n' +
+            '            font-weight: 700;\n' +
+            '            line-height: 1.3;\n' +
+            '        }\n' +
+            '\n' +
+            '        p {\n' +
+            '            margin-bottom: 1.2em;\n' +
+            '            text-align: justify;\n' +
+            '        }\n' +
+            '\n' +
+            '        h2, h3, h4 {\n' +
+            '            font-family: \'' + headingFont + '\', sans-serif;\n' +
+            '            margin-top: 1.5em;\n' +
+            '            margin-bottom: 0.8em;\n' +
+            '            line-height: 1.4;\n' +
+            '        }\n' +
+            '\n' +
+            '        h2 { font-size: 18pt; }\n' +
+            '        h3 { font-size: 16pt; }\n' +
+            '        h4 { font-size: 14pt; }\n' +
+            '\n' +
+            '        ul, ol {\n' +
+            '            margin-bottom: 1.2em;\n' +
+            '            padding-left: 2em;\n' +
+            '        }\n' +
+            '\n' +
+            '        li {\n' +
+            '            margin-bottom: 0.5em;\n' +
+            '        }\n' +
+            '    </style>\n' +
+            '</head>\n' +
+            '<body>\n' +
+            '    <h1>' + (site.longTitle || site.title) + '</h1>\n' +
+            '    <div class="toc">\n' +
+            '        <h2>Table of Contents</h2>\n' +
+            '        <ol>' + tocHtml + '</ol>\n' +
+            '    </div>\n' +
+            chapters.map(function (chapter, i) {
+                return '    <div class="chapter" id="chapter-' + (i + 1) + '">\n' +
+                    '        <h2 class="chapter-title">' + chapter.title + '</h2>\n' +
+                    '        ' + chapter.content + '\n' +
+                    '    </div>';
+            }).join('\n') +
+            '\n</body>\n</html>';
+
+        fs.writeFileSync(tempHtmlPath, html);
+
+        await page.goto('file://' + tempHtmlPath, { waitUntil: 'networkidle0' });
+        await page.pdf({
+            path: path.join(__dirname, '../dist/book.pdf'),
+            format: 'A4',
+            margin: { top: '2.5cm', right: '2.5cm', bottom: '2.5cm', left: '2.5cm' },
+            printBackground: true,
+            displayHeaderFooter: true,
+            headerTemplate: '<span></span>',
+            footerTemplate: '<div style="width: 100%; text-align: center; font-size: 9pt; color: #999; font-family: sans-serif;"><span class="pageNumber"></span></div>'
+        });
+    } finally {
+        try { fs.unlinkSync(tempHtmlPath); } catch (e) { /* ignore if already deleted */ }
+        await browser.close();
+    }
 }
 
-async function generateEPUB() {
+async function generateEPUB(chapters) {
     if (!site.formats.epub) return;
 
-    const chapters = await getChapterContent();
     const coverPath = path.join(__dirname, '../src', site.coverImage);
-    
+
     // Check if cover image exists
     if (!fs.existsSync(coverPath)) {
         console.warn('Warning: Cover image not found at', coverPath);
     }
 
+    const bodyFont = site.fonts.body || 'Merriweather';
+
     const options = {
         title: site.title,
         author: site.author,
         publisher: site.author,
-        cover: coverPath,
-        content: chapters.map(chapter => ({
-            title: chapter.title,
-            data: chapter.data,
-            beforeToc: chapter === chapters[0] // Only first chapter appears before TOC
-        })),
-        css: `
-            body {
-                font-family: 'Merriweather', serif;
-                line-height: 1.8;
-                font-size: 1.1em;
-            }
-            h1 {
-                text-align: center;
-                font-size: 2em;
-                margin: 1em 0;
-                line-height: 1.2;
-            }
-            h2 {
-                text-align: center;
-                font-size: 1.5em;
-                margin: 1em 0;
-                line-height: 1.3;
-            }
-            p {
-                margin: 1em 0;
-                text-align: justify;
-            }
-            .chapter {
-                margin: 2em 0;
-            }
-        `
+        cover: fs.existsSync(coverPath) ? coverPath : undefined,
+        css: '\n' +
+            '            body {\n' +
+            '                font-family: \'' + bodyFont + '\', serif;\n' +
+            '                line-height: 1.8;\n' +
+            '                font-size: 1.1em;\n' +
+            '            }\n' +
+            '            h1 {\n' +
+            '                text-align: center;\n' +
+            '                font-size: 2em;\n' +
+            '                margin: 1em 0;\n' +
+            '                line-height: 1.2;\n' +
+            '            }\n' +
+            '            h2 {\n' +
+            '                text-align: center;\n' +
+            '                font-size: 1.5em;\n' +
+            '                margin: 1em 0;\n' +
+            '                line-height: 1.3;\n' +
+            '            }\n' +
+            '            p {\n' +
+            '                margin: 1em 0;\n' +
+            '                text-align: justify;\n' +
+            '            }\n' +
+            '            .chapter {\n' +
+            '                margin: 2em 0;\n' +
+            '            }\n' +
+            '        '
     };
 
-    await new Epub(options, path.join(__dirname, '../dist/book.epub')).promise;
+    const epubChapters = chapters.map(function (chapter) {
+        return {
+            title: chapter.title,
+            content: chapter.content,
+        };
+    });
+
+    const epubBuffer = await epub(options, epubChapters);
+    fs.writeFileSync(path.join(__dirname, '../dist/book.epub'), epubBuffer);
 }
 
 async function main() {
@@ -203,8 +235,11 @@ async function main() {
             fs.mkdirSync(distDir, { recursive: true });
         }
 
-        await generatePDF();
-        await generateEPUB();
+        // Read chapter content once, share between PDF and EPUB
+        const chapters = getChapterContent();
+
+        await generatePDF(chapters);
+        await generateEPUB(chapters);
         console.log('Book formats generated successfully!');
     } catch (error) {
         console.error('Error generating book formats:', error);
@@ -212,4 +247,4 @@ async function main() {
     }
 }
 
-main(); 
+main();

@@ -1,7 +1,7 @@
 ---
 title: "Essential Baking Equipments"
 description: "Discover the must-have tools and equipment that will set you up for baking success."
-customSlug: "essential-equipment"
+permalink: "/essential-equipment/"
 ---
 
 Before you embark on your baking journey, it's important to gather the essential tools that will help you achieve delicious results. While you don't need a professional kitchen, having the right equipment on hand will make the process smoother and more enjoyable. 

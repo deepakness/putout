@@ -1,7 +1,7 @@
 ---
 title: "Basic Baking Techniques"
 description: "Learn the fundamental techniques that will transform you into a confident baker."
-customSlug: "basic-techniques"
+permalink: "/basic-techniques/"
 ---
 
 Mastering basic baking techniques is the key to consistent, delicious results. These fundamental skills will become second nature as you gain experience, allowing you to confidently tackle any recipe. 

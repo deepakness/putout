@@ -1,0 +1,43 @@
+---
+layout: base.njk
+title: Page Not Found
+description: The page you're looking for doesn't exist.
+permalink: /404.html
+eleventyExcludeFromCollections: true
+---
+<div class="container mx-auto px-4 py-24 max-w-2xl text-center">
+    <h1 class="text-6xl font-bold mb-4 font-heading">404</h1>
+    <p class="text-xl mb-8 opacity-70">The page you're looking for doesn't exist.</p>
+    <div class="flex flex-col sm:flex-row gap-4 justify-center">
+        <a href="/" class="bg-accent-600 text-white hover:bg-accent-700 shadow-sm inline-flex items-center gap-2 py-3 px-6 rounded-lg font-heading font-semibold transition-colors duration-300">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-4 0h4" />
+            </svg>
+            Go Home
+        </a>
+        {% if collections.chapters.length %}
+        <a href="{{ collections.chapters[0].url }}" class="bg-white text-gray-700 border border-gray-300 hover:bg-gray-50 hover:border-accent-300 dark:bg-gray-700 dark:text-gray-200 dark:border-gray-600 dark:hover:bg-gray-600 dark:hover:border-accent-600 inline-flex items-center gap-2 py-3 px-6 rounded-lg font-heading font-medium transition-colors duration-300">
+            Start Reading
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+            </svg>
+        </a>
+        {% endif %}
+    </div>
+
+    {% if collections.chapters.length %}
+    <div class="mt-16">
+        <h2 class="text-lg font-semibold font-heading mb-4 opacity-70">Or browse chapters:</h2>
+        <ul class="space-y-2 text-left max-w-sm mx-auto">
+            {%- for chapter in collections.chapters %}
+            <li>
+                <a href="{{ chapter.url }}" class="flex items-center gap-3 px-4 py-2 rounded-lg text-sm font-heading hover:bg-accent-50/50 transition-colors duration-200">
+                    <span class="text-xs font-medium opacity-60">{{ loop.index }}</span>
+                    <span>{{ chapter.data.title }}</span>
+                </a>
+            </li>
+            {%- endfor %}
+        </ul>
+    </div>
+    {% endif %}
+</div>
