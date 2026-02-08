@@ -19,6 +19,10 @@ Turn your ebook into a beautiful, easy-to-navigate website using [Eleventy (11ty
 - [Troubleshooting](#troubleshooting-)
 - [License](#license-)
 
+## Documentation 📖
+
+Full documentation is available on the [PutOut Wiki](https://github.com/deepakness/putout/wiki) — covers configuration, chapters, theming, SEO, accessibility, PDF/EPUB generation, deployment, and more.
+
 ## Quick Deploy ⚡️
 
 Quickly deploy your own copy of this project to Netlify with one click:
